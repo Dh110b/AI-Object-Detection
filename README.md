@@ -8,3 +8,8 @@ files that need to be installed
 - ultranalystics
 - flask-cors
 - numpy
+
+<h2 HOW TO USE </h2>
+Open file from Commend Prompt 
+run the app.py file
+open index.html and allow camera in your web browser
