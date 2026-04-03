@@ -1,0 +1,35 @@
+/* styles.css */
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0; /* Light gray background */
+    margin: 20px;
+}
+
+h1 {
+    color: #333; /* Darker heading color */
+    margin-bottom: 20px;
+}
+
+#video, #canvas {
+    border: 2px solid #ddd; /* Lighter border */
+    margin-bottom: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+#captureButton {
+    padding: 12px 25px;
+    background-color: #007bff; /* Blue */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px; /* More rounded corners */
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+#captureButton:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}

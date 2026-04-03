@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Object Detection with Camera</title>			//css
+     <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Object Detection with Camera</h1>				//display
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <button id="captureButton">Capture and Detect</button>
+
+    <script>
+        const video = document.getElementById('video');				//retrive_video
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const captureButton = document.getElementById('captureButton');
+
+        navigator.mediaDevices.getUserMedia({ video: true })			//accessing_webcam
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing camera:', error);
+                alert("Error accessing camera: " + error.message);
+            });
+
+        captureButton.addEventListener('click', () => {				//capturing_video
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(blob => {						//convert_image_into_file_and _sending_to_backend	
+                const formData = new FormData();
+                formData.append('image', blob, 'captured_image.png');
+
+                fetch('http://127.0.0.1:5000/detect', {  // Full URL is crucial
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {					//handling_server_response
+                    console.log("Response status:", response.status);
+                    if (!response.ok) {
+                        return response.json().then(err => {throw new Error(err.error)});
+                    }
+                    return response.json();
+                })
+                .then(results => {					//makes_border_on_object
+                    console.log("Detection results:", results);
+
+                    if (Array.isArray(results)) {  // Check if results is an array
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        if (results.length > 0) { // Check if results is not empty
+                            results.forEach(result => {
+                                const { label, bbox } = result;
+                                const [x1, y1, x2, y2] = bbox;
+                                ctx.strokeStyle = 'red';
+                                ctx.lineWidth = 2;
+                                ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+                                ctx.fillStyle = 'red';
+                                ctx.font = "14px Arial";
+                                ctx.fillText(label, x1, y1 - 10);
+                            });
+                        } else {
+                            console.log("No objects detected.");
+                        }
+                    } else if (results && results.error) {
+                        console.error("Backend error:", results.error);
+                        alert("Detection error:" + results.error);
+                    } else {
+                        console.error("Invalid response format:", results);
+                        alert("The server returned an invalid response.");
+                    }
+
+                })
+                .catch(error => {				//error_handling
+                    console.error("Fetch error:", error);
+                    alert("An error occurred during detection: " + error.message);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
