@@ -1,6 +1,6 @@
 <h1>AI OBJECT DETECTION</h1>
 
-This is a Simple Object Detection code
+This is a Simple Object Detection code <br>
 files that need to be installed 
 - pip
 - flask
@@ -10,6 +10,6 @@ files that need to be installed
 - numpy
 
 <h2> HOW TO USE </h2>
-Open file from Commend Prompt 
-run the app.py file
+Open file from Commend Prompt <br>
+run the app.py file <br>
 open index.html and allow camera in your web browser
