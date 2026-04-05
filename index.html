@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Object Detection with Camera</title>			//css
+    <title>Object Detection with Camera</title>			
      <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -12,12 +12,12 @@
     <button id="captureButton">Capture and Detect</button>
 
     <script>
-        const video = document.getElementById('video');				//retrive_video
+        const video = document.getElementById('video');				
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const captureButton = document.getElementById('captureButton');
 
-        navigator.mediaDevices.getUserMedia({ video: true })			//accessing_webcam
+        navigator.mediaDevices.getUserMedia({ video: true })			
             .then(stream => {
                 video.srcObject = stream;
             })
@@ -26,32 +26,32 @@
                 alert("Error accessing camera: " + error.message);
             });
 
-        captureButton.addEventListener('click', () => {				//capturing_video
+        captureButton.addEventListener('click', () => {				
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            canvas.toBlob(blob => {						//convert_image_into_file_and _sending_to_backend	
+            canvas.toBlob(blob => {							
                 const formData = new FormData();
                 formData.append('image', blob, 'captured_image.png');
 
-                fetch('http://127.0.0.1:5000/detect', {  // Full URL is crucial
+                fetch('http://127.0.0.1:5000/detect', { 
                     method: 'POST',
                     body: formData
                 })
-                .then(response => {					//handling_server_response
+                .then(response => {					
                     console.log("Response status:", response.status);
                     if (!response.ok) {
                         return response.json().then(err => {throw new Error(err.error)});
                     }
                     return response.json();
                 })
-                .then(results => {					//makes_border_on_object
+                .then(results => {					
                     console.log("Detection results:", results);
 
-                    if (Array.isArray(results)) {  // Check if results is an array
+                    if (Array.isArray(results)) {  
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                        if (results.length > 0) { // Check if results is not empty
+                        if (results.length > 0) { 
                             results.forEach(result => {
                                 const { label, bbox } = result;
                                 const [x1, y1, x2, y2] = bbox;
@@ -74,7 +74,7 @@
                     }
 
                 })
-                .catch(error => {				//error_handling
+                .catch(error => {			
                     console.error("Fetch error:", error);
                     alert("An error occurred during detection: " + error.message);
                 });
